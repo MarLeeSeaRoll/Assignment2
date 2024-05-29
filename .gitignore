@@ -1,0 +1,5 @@
+*.exe
+.vscode/*
+*.json
+!.vscode/launch.json
+*.gitignore
