@@ -3,14 +3,12 @@
 
 using namespace std;
 
-const int CAP = 300;
-string id[CAP];
-string name[CAP];
-double mathMarks[CAP];
-double scienceMarks[CAP];
-double englishMarks[CAP];
-double totalMarks[CAP]
-
+void welcomeScreen(){
+    cout<< "+-------------------------------------------------+\n"
+        << "|             Welcome to Tax Calculator.          |\n"
+        << "+-------------------------------------------------+\n\n";
+        
+}
 // Function to read data from the input file and store it in a vector of Student objects
 vector<Student> readDataFromFile(const string& filename) {
 	ifstream file(filename.c_str());
@@ -110,6 +108,14 @@ void writeReportToFile(const vector<Student>& students) {
 }
 
 int main() {
+    const int CAP = 300;
+    string id[CAP];
+    string name[CAP];
+    double mathMarks[CAP];
+    double scienceMarks[CAP];
+    double englishMarks[CAP];
+    double totalMarks[CAP];
+
     vector<Student> students = readDataFromFile("studentmarks.txt");
     char choice;
 
@@ -156,3 +162,19 @@ int main() {
 
     return 0;
 }
+void bubbleSort(int array[], int size)
+{
+    for (int i = 0; i < size - 1; ++i)
+    {
+        // Last i elements are already sorted
+        for (int j = 0; j < size - i - 1; ++j)
+        {
+            if (array[j] > array[j + 1])
+            {
+                // Swap array[j] and array[j + 1]
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+            }
+        }
+    }
