@@ -23,6 +23,9 @@ void totalist(string ids[], string names[], double math[], double science[], dou
 // Function to print list of students sorted by total marks using bubble sort
 void sortedtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
+// Function for finding highest and lowest total marks
+void twoextremevalue(double total[], int indexArray[], int count);
+
 // Function to write report to file
 void writerepo(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
@@ -30,6 +33,7 @@ void writerepo(string ids[], string names[], double math[], double science[], do
 int main()
 {
     const int maxSize = 300;
+    //Six options
     const int printAll = 1;
     const int matchID = 2;
     const int listWithTotal = 3;
@@ -38,15 +42,19 @@ int main()
     const int exitProgram = 6;
     const int lowerLimit = 1;
     const int upperLimit = 6;
+    //Arrays
     string ids[maxSize];
     string names[maxSize];
     double math[maxSize];
     double science[maxSize];
     double English[maxSize];
     double total[maxSize];
+
     int count = readfile("studentmarks.txt", ids, names, math, science, English, total, maxSize);
     bool totalMarkCalculation = false;
     bool continueRunning;
+
+
     // Welcome Screen
     cout << "+----------------------------------------------------------------------------+\n"
          << "|             Welcome to Student Results Enquiry Processing System.          |\n"
@@ -190,7 +198,6 @@ void printall(string ids[], string names[], double math[], double science[], dou
             cout << "\tScience Marks: " << science[i] << endl;
             cout << "\tEnglish Marks: " << English[i] << endl;
             cout << "\tTotal Marks: " << total[i] << endl;
-            break;
         }
     }
     if (!found)
@@ -202,7 +209,7 @@ void printall(string ids[], string names[], double math[], double science[], dou
 // Function to display the list of students with total marks
 void totalist(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
-    cout <<"SID \t Name \t Math \t Science \tEnglish \t total\n";
+    cout <<"ID\tName\tMath\tScience\tEnglish\ttotal\n";
     for (int i = 0; i < count; i++)
     {
         cout << ids[i] <<"\t" << names[i] <<"\t"
@@ -215,6 +222,7 @@ void totalist(string ids[], string names[], double math[], double science[], dou
 void sortedtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
     const int avoidMnumber = 1;//Avoid magic number.
+   
     // Bubble sort
     for (int i = 0; i < count - avoidMnumber; i++)
     {
@@ -253,51 +261,73 @@ void sortedtotal(string ids[], string names[], double math[], double science[], 
     // Display sorted list
     totalist(ids, names, math, science, English, total, count);
 }
+//Function for finding highest and lowest total marks
+void twoextremevalue(double total[], int indexArray[], int count){
+    const int avoidMnumber = 1;
+    int highestIndex = 0, lowestIndex = 0;
+    for (int i = 0; i < count - avoidMnumber; i++)
+    {
+        for (int j = 0; j < count - i - avoidMnumber; j++)
+        {
+            if (total[j] > total[j + avoidMnumber])
+            {
+                double temp = total[j];
+                total[j] = total[j + avoidMnumber];
+                total[j + avoidMnumber] = temp;
+
+                int arraytemp = indexArray[j];
+                indexArray[j] = indexArray[j + avoidMnumber];
+                indexArray[j + avoidMnumber] = arraytemp;
+            }
+        }
+    }
+    
+}
 
 // Function to write report to file
-void writerepo(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
+void writereport(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
     ofstream outfile("summary.txt");
-
-    double totalMath = 0, totalScience = 0, totalEnglish = 0, totalAll = 0;
-    for (int i = 0; i < count; i++)
-    {
-        totalMath += math[i];
-        totalScience += science[i];
-        totalEnglish += English[i];
-        totalAll += total[i];
+    if(!outfile){
+        cout << "File open failed" << endl;
     }
-    double avgMath = totalMath / count;
-    double avgScience = totalScience / count;
-    double avgEnglish = totalEnglish / count;
-    double avgTotal = totalAll / count;
-
-    // Find highest and lowest total marks
-    double highestMarks = total[0], lowestMarks = total[0];
-    int highestIndex = 0, lowestIndex = 0;
-    for (int i = 1; i < count; i++)
-    {
-        if (total[i] > highestMarks)
+    else{
+        cout << "File open successfully" << endl;
+        double mathtotal = 0, sciencetotal = 0, Englishtotal = 0, totalAll = 0;
+        for (int i = 0; i < count; i++)
         {
-            highestMarks = total[i];
-            highestIndex = i;
+            mathtotal += math[i];
+            sciencetotal += science[i];
+            Englishtotal += English[i];
+            totalAll += total[i];
         }
-        if (total[i] < lowestMarks)
+        double avgmath = mathtotal / count;
+        double avgscience = sciencetotal / count;
+        double avgEnglish = Englishtotal / count;
+        double avgtotal = totalAll / count;
+        const int avoidMnumber = 1;
+        const int lowest = 0;
+        int indexArray[count];
+        for (int i = 0; i < count;i++){
+            indexArray[i] = i;
+        }
+            twoextremevalue(total, indexArray, count);
+        
+        int highestmark = total[count - avoidMnumber];
+        int lowestmark = total[lowest];
+        int highestIndex = indexArray[count - avoidMnumber];
+        int lowestIndex = indexArray[lowest];
+        outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
+        for (int i = 0; i < count; ++i)
         {
-            lowestMarks = total[i];
-            lowestIndex = i;
+            outfile << ids[i] << "\t" << names[i] << "\t" << math[i] << "\t" << science[i] << "\t" << English[i] << "\t" << total[i] << endl;
         }
-    }
-    outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
-    for (int i = 0; i < count; ++i)
-    {
-        outfile << ids[i] << "\t" << names[i] << "\t" << math[i] << "\t" << science[i] << "\t" << English[i] << "\t" << total[i] << endl;
-    }
-    outfile << "\nClass Averages:\n";
-    outfile << "Math: " << avgMath << ", Science: " << avgScience << ", English: " << avgEnglish << ", Total: " << avgTotal << endl;
-    outfile << "\nHighest Total Marks: " << highestMarks << " (ID: " << ids[highestIndex] << ", Name: " << names[highestIndex] << ")\n";
-    outfile << "Lowest Total Marks: " << lowestMarks << " (ID: " << ids[lowestIndex] << ", Name: " << names[lowestIndex] << ")\n";
+        outfile << "\nClass Averages:\n";
+        outfile << "Math: " << avgmath << ", Science: " << avgscience << ", English: " << avgEnglish << ", Total: " << avgtotal << endl;
+        outfile << "\nHighest Total Marks: " << highestmark << " (ID: " << ids[highestIndex] << ", Name: " << names[highestIndex] << ")\n";
+        outfile << "Lowest Total Marks: " << lowestmark << " (ID: " << ids[lowestIndex] << ", Name: " << names[lowestIndex] << ")\n";
 
-    outfile.close();
-    cout << "Report has been written to summary.txt\n";
+        outfile.close();
+        cout << "Report has been written to summary.txt\n";
+    }
 }
