@@ -1,8 +1,15 @@
-Student ID: S123005, Name: Eve, Math: 79, Science: 84.5, English: 88, Total: 251.5
-Student ID: S123001, Name: Alice, Math: 78.5, Science: 82, English: 91.5, Total: 252
-Student ID: S123008, Name: Hannah, Math: 86.5, Science: 79, English: 88.5, Total: 254
-Student ID: S123006, Name: Frank, Math: 80, Science: 90, English: 85.5, Total: 255.5
-Student ID: S123002, Name: Bob, Math: 88, Science: 77.5, English: 93, Total: 258.5
-Student ID: S123007, Name: Grace, Math: 77.5, Science: 89, English: 92, Total: 258.5
-Student ID: S123004, Name: David, Math: 92.5, Science: 81, English: 86, Total: 259.5
-Student ID: S123003, Name: Charlie, Math: 85, Science: 89.5, English: 90, Total: 264.5
+ID	Name	Math	Science	English	Total
+S123005	Eve	79	84.5	88	251.5
+S123001	Alice	78.5	82	91.5	252
+S123008	Hannah	86.5	79	88.5	254
+S123006	Frank	80	90	85.5	255.5
+S123002	Bob	88	77.5	93	258.5
+S123007	Grace	77.5	89	92	258.5
+S123004	David	92.5	81	86	259.5
+S123003	Charlie	85	89.5	90	264.5
+
+Class Averages:
+Math: 83.375, Science: 84.0625, English: 89.3125, Total: 256.75
+
+Highest Total Marks: 264.5 (ID: S123003, Name: Charlie)
+Lowest Total Marks: 251.5 (ID: S123005, Name: Eve)
