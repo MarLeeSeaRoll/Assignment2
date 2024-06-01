@@ -11,5 +11,5 @@ S123003	Charlie	85	89.5	90	264.5
 Class Averages:
 Math: 83.375, Science: 84.0625, English: 89.3125, Total: 256.75
 
-Highest Total Marks: 264.5 (ID: S123003, Name: Charlie)
-Lowest Total Marks: 251.5 (ID: S123005, Name: Eve)
+Highest Total Marks: 264 (ID: S123003, Name: Charlie)
+Lowest Total Marks: 251 (ID: S123005, Name: Eve)

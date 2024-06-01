@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
 
 using namespace std;
 
@@ -27,7 +26,7 @@ void sortedtotal(string ids[], string names[], double math[], double science[], 
 void twoextremevalue(double total[], int indexArray[], int count);
 
 // Function to write report to file
-void writerepo(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
+void writereport(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
 //Main function
 int main()
@@ -111,7 +110,7 @@ int main()
             }
             else
             {
-                writerepo(ids, names, math, science, English, total, count);
+                writereport(ids, names, math, science, English, total, count);
             }
         }
         else if (choice == exitProgram)
@@ -311,7 +310,8 @@ void writereport(string ids[], string names[], double math[], double science[], 
         for (int i = 0; i < count;i++){
             indexArray[i] = i;
         }
-            twoextremevalue(total, indexArray, count);
+        
+        twoextremevalue(total, indexArray, count);
         
         int highestmark = total[count - avoidMnumber];
         int lowestmark = total[lowest];
