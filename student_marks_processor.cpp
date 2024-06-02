@@ -23,7 +23,7 @@ void totalist(string ids[], string names[], double math[], double science[], dou
 void sortedtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
 // Function for finding highest and lowest total marks
-void twoextremevalue(double total[], int indexArray[], int count);
+void twoextremevalue(double total[], int markIndex[], int count);
 
 // Function to write report to file
 void writereport(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
@@ -208,7 +208,7 @@ void printall(string ids[], string names[], double math[], double science[], dou
 // Function to display the list of students with total marks
 void totalist(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
-    cout <<"ID\tName\tMath\tScience\tEnglish\ttotal\n";
+    cout <<"ID\tName\tMath\tScience\tEnglish\tTotal\n";
     for (int i = 0; i < count; i++)
     {
         cout << ids[i] <<"\t" << names[i] <<"\t"
@@ -261,7 +261,7 @@ void sortedtotal(string ids[], string names[], double math[], double science[], 
     totalist(ids, names, math, science, English, total, count);
 }
 //Function for finding highest and lowest total marks
-void twoextremevalue(double total[], int indexArray[], int count){
+void twoextremevalue(double total[], int markIndex[], int count){
     const int avoidMnumber = 1;
     int highestIndex = 0, lowestIndex = 0;
     for (int i = 0; i < count - avoidMnumber; i++)
@@ -274,10 +274,14 @@ void twoextremevalue(double total[], int indexArray[], int count){
                 total[j] = total[j + avoidMnumber];
                 total[j + avoidMnumber] = temp;
 
-                int arraytemp = indexArray[j];
-                indexArray[j] = indexArray[j + avoidMnumber];
-                indexArray[j + avoidMnumber] = arraytemp;
+                int arraytemp = markIndex[j];
+             markIndex[j] = markIndex[j + avoidMnumber];
+             markIndex[j + avoidMnumber] = arraytemp;
             }
+        }
+        for (int i = 0; i < count; i++)
+        {
+         markIndex[i] = i;
         }
     }
     
@@ -306,17 +310,15 @@ void writereport(string ids[], string names[], double math[], double science[], 
         double avgtotal = totalAll / count;
         const int avoidMnumber = 1;
         const int lowest = 0;
-        int indexArray[count];
-        for (int i = 0; i < count;i++){
-            indexArray[i] = i;
-        }
+        int markIndex[count];
         
-        twoextremevalue(total, indexArray, count);
         
-        int highestmark = total[count - avoidMnumber];
-        int lowestmark = total[lowest];
-        int highestIndex = indexArray[count - avoidMnumber];
-        int lowestIndex = indexArray[lowest];
+        twoextremevalue(total, markIndex, count);
+        
+        double highestmark = total[count - avoidMnumber];
+        double lowestmark = total[lowest];
+        int highestIndex = markIndex[count - avoidMnumber];
+        int lowestIndex = markIndex[lowest];
         outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
         for (int i = 0; i < count; ++i)
         {
