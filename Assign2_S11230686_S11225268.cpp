@@ -61,7 +61,7 @@ int main()
     double total[maxSize];
 
     // Index for arrays
-    int count = 0;
+    
     // Make sure user have calculate the total number
     bool totalMarkCalculation = false;
     // Flag that determine whether the program will continue going or not
@@ -83,10 +83,12 @@ int main()
     quirorStart(continueRunning);
 
     //Read data from certain file
-    readfile("studentmarks.txt", ids, names, math, science, English, total, maxSize, count, opensuccessfully);
 
     while (continueRunning)
     {
+        int count = 0;
+
+        readfile("studentmarks.txt", ids, names, math, science, English, total, maxSize, count, opensuccessfully);
         // Menu
         cout << "\nMenu:\n";
         cout << "1) Print the entire list\n";
