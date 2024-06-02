@@ -156,7 +156,7 @@ int main()
 }
 
 
-/*-------------------------------Function bodys-----------------------------*/
+/*-------------------------------Function bodies-----------------------------*/
 // Function for input validation
 int readInput(int l_limit, int u_limit)
 {
@@ -345,27 +345,14 @@ void writereport(string ids[], string names[], double math[], double science[], 
         double avgtotal = totalAll / count;
         // Variable for avoiding magic number
         const int startIndex = 0;
+        const int avoidMnumber=1;
 
-        // Variables of highest mark and lowestIndex mark
-        double highestmark = total[startIndex];
+        // Variables of extreme value and Index
+        double highestmark = total[count-avoidMnumber];
         double lowestmark = total[startIndex];
-        int highestIndex = 0;
-        int lowestIndex = 0;
+        int highestIndex = count-avoidMnumber;
+        int lowestIndex = startIndex;
 
-        // Find extreme values
-        for (int i = 0; i < count; i++)
-        {
-            if (total[i] > highestmark)
-            {
-                highestmark = total[i];
-                highestIndex = i;
-            }
-            if (total[i] < lowestIndex)
-            {
-                lowestmark = total[i];
-                lowestIndex = i;
-            }
-        }
 
         outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
         for (int i = 0; i < count; ++i)
