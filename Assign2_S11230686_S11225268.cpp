@@ -48,6 +48,7 @@ int main()
     const int printSortedList = 4;
     const int writeReport = 5;
     const int exitProgram = 6;
+    //Limits for six options 
     const int lowerLimit = 1;
     const int upperLimit = 6;
 
