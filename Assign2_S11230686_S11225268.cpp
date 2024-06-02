@@ -355,7 +355,7 @@ void writereport(string ids[], string names[], double math[], double science[], 
 
 
         outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
-        for (int i = 0; i < count; ++i)
+        for (int i = 0; i < count; i++)
         {
             outfile << ids[i] << "\t" << names[i] << "\t" << math[i] << "\t" << science[i] << "\t" << English[i] << "\t" << total[i] << endl;
         }
