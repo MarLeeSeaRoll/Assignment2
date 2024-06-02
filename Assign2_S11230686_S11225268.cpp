@@ -1,38 +1,47 @@
+/*Assignment2
+Student1: ZhiXian Chen S11230686
+Student2: Ye yiyu      S11225268*/
+
+
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
-/*Function Prototypes*/
-//Function for input validation
+/*---------------------Function Prototypes--------------------------*/
+// Function for input validation
 int readInput(int l_limit, int u_limit);
 
-// Function for decision on whether to withdraw from the procedure
+// Function for decide to withdraw from the procedure or not
 void quirorStart(bool &continueRunning);
 
 // Function to read data from file into arrays
-int readfile(const string &filename, string ids[], string names[], double math[], double science[], double English[], double total[], int maxSize);
+void readfile(string filename, string ids[], string names[], double math[], double science[], double English[], double total[], int maxSize, int &count, bool &opensuccessfully);
 
 // Function to print details of a student matching a provided ID number
-void printall(string ids[], string names[], double math[], double science[], double English[], double total[], int count, const string &id);
+void printall(string ids[], string names[], double math[], double science[], double English[], int count, const string &id);
+
+// Function to display the list of students without total marks
+void listwithouttotal(string ids[], string names[], double math[], double science[], double English[], int count);
 
 // Function to display the list of students with total marks
-void totalist(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
+void listwithtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
 // Function to print list of students sorted by total marks using bubble sort
 void sortedtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
-// Function for finding highest and lowest total marks
-void twoextremevalue(double total[], int markIndex[], int count);
-
 // Function to write report to file
 void writereport(string ids[], string names[], double math[], double science[], double English[], double total[], int count);
 
-//Main function
+
+
+// Main function
 int main()
 {
+    // Size of data arrays
     const int maxSize = 300;
-    //Six options
+    // Six options
     const int printAll = 1;
     const int matchID = 2;
     const int listWithTotal = 3;
@@ -41,7 +50,8 @@ int main()
     const int exitProgram = 6;
     const int lowerLimit = 1;
     const int upperLimit = 6;
-    //Arrays
+
+    //Data Arrays
     string ids[maxSize];
     string names[maxSize];
     double math[maxSize];
@@ -49,21 +59,34 @@ int main()
     double English[maxSize];
     double total[maxSize];
 
-    int count = readfile("studentmarks.txt", ids, names, math, science, English, total, maxSize);
+    // Index for arrays
+    int count = 0;
+    // Make sure user have calculate the total number
     bool totalMarkCalculation = false;
+    // Flag that determine whether the program will continue going or not
     bool continueRunning;
+    // Flag that shows whether the file has been read successfully
+    bool opensuccessfully = false;
 
+    //-------------------------------The main body of whole program----------------------------------------------
+
+    // Set variables to 2 decimal point
+    cout << fixed << setprecision(2) << endl;
 
     // Welcome Screen
     cout << "+----------------------------------------------------------------------------+\n"
          << "|             Welcome to Student Results Enquiry Processing System.          |\n"
          << "+----------------------------------------------------------------------------+\n\n";
 
+    // Decide whether program start or not function call
     quirorStart(continueRunning);
+
+    //Read data from certain file
+    readfile("studentmarks.txt", ids, names, math, science, English, total, maxSize, count, opensuccessfully);
 
     while (continueRunning)
     {
-
+        // Menu
         cout << "\nMenu:\n";
         cout << "1) Print the entire list\n";
         cout << "2) Print details of student matching a provided ID number\n";
@@ -73,22 +96,31 @@ int main()
         cout << "6) Exit program\n";
         cout << "Enter your choice: ";
 
+        // Validate input function call
         int choice = readInput(lowerLimit, upperLimit);
 
+        // Warning message
+        if (!opensuccessfully&&choice!=exitProgram)
+        {
+            cout << "Error: Unable to read file. Please make sure the file exists and is in the correct format." << endl;
+            continue;
+        }
+
+        // Logic of six options
         if (choice == printAll)
         {
-            totalist(ids, names, math, science, English, total, count);
+            listwithouttotal(ids, names, math, science, English, count);
         }
         else if (choice == matchID)
         {
             string id;
             cout << "Enter student ID: ";
             cin >> id;
-            printall(ids, names, math, science, English, total, count, id);
+            printall(ids, names, math, science, English, count, id);
         }
         else if (choice == listWithTotal)
         {
-            totalist(ids, names, math, science, English, total, count);
+            listwithtotal(ids, names, math, science, English, total, count);
             totalMarkCalculation = true;
         }
         else if (choice == printSortedList)
@@ -100,6 +132,7 @@ int main()
             else
             {
                 sortedtotal(ids, names, math, science, English, total, count);
+                listwithtotal(ids, names, math, science, English, total, count);
             }
         }
         else if (choice == writeReport)
@@ -118,10 +151,12 @@ int main()
             break;
         }
     }
-    cout << "\nThank you for using." << endl;
+    cout << "\nExiting the programme.\nThank you for using." << endl;
     return 0;
 }
 
+
+/*-------------------------------Function bodys-----------------------------*/
 // Function for input validation
 int readInput(int l_limit, int u_limit)
 {
@@ -132,7 +167,7 @@ int readInput(int l_limit, int u_limit)
         cin.clear();
         string dummy;
         getline(cin, dummy);
-        cout << "Invalid choice. Please enter again.\n";
+        cout << "Invalid choice. Please enter again:";
         cin >> x;
     }
     return x;
@@ -144,6 +179,8 @@ void quirorStart(bool &continueRunning)
     char decision;
     cout << "\n Enter S to start or Q to quit: ";
     cin >> decision;
+
+    //Input validation
     while (cin.fail() || (decision != 'q' && decision != 'Q' && decision != 's' && decision != 'S'))
     {
         cin.clear();
@@ -166,24 +203,29 @@ void quirorStart(bool &continueRunning)
 }
 
 // Function to read data from file into arrays
-int readfile(const string &filename, string ids[], string names[], double math[], double science[], double English[], double total[], int maxSize)
+void readfile(string filename, string ids[], string names[], double math[], double science[], double English[], double total[], int maxSize, int &count, bool &opensuccessfully)
 {
     ifstream file(filename.c_str());
-    int count = 0;
     string headermove;
-    getline(file, headermove);
 
-    while (file >> ids[count] >> names[count] >> math[count] >> science[count] >> English[count] && count < maxSize)
+    if (!file)
     {
-        total[count] = math[count] + science[count] + English[count];
-        count++;
+        cout << "File open failed, unable to read data" << endl;
+        opensuccessfully = false;
     }
-
-    return count;
+    else
+    {
+        getline(file, headermove);
+        while (file >> ids[count] >> names[count] >> math[count] >> science[count] >> English[count] && count < maxSize)
+        {
+            count++;
+        }
+        opensuccessfully = true;
+    }
 }
 
 // Function to print details of a student matching a provided ID number
-void printall(string ids[], string names[], double math[], double science[], double English[], double total[], int count, const string &id)
+void printall(string ids[], string names[], double math[], double science[], double English[], int count, const string &id)
 {
     bool found = false;
     for (int i = 0; i < count; i++)
@@ -191,12 +233,11 @@ void printall(string ids[], string names[], double math[], double science[], dou
         if (ids[i] == id)
         {
             found = true;
-            cout << "\tStudent ID: " << ids[i] << endl;
-            cout << "\tStudent Name: " << names[i] << endl;
-            cout << "\tMath Marks: " << math[i] << endl;
-            cout << "\tScience Marks: " << science[i] << endl;
-            cout << "\tEnglish Marks: " << English[i] << endl;
-            cout << "\tTotal Marks: " << total[i] << endl;
+            cout << "\tStudent ID: "<<"\t"<< ids[i] << endl;
+            cout << "\tStudent Name: " << "\t" << names[i] << endl;
+            cout << "\tMath Marks: " << "\t" << math[i] << endl;
+            cout << "\tScience Marks: " << "\t" << science[i] << endl;
+            cout << "\tEnglish Marks: " << "\t" << English[i] << endl;
         }
     }
     if (!found)
@@ -205,97 +246,90 @@ void printall(string ids[], string names[], double math[], double science[], dou
     }
 }
 
-// Function to display the list of students with total marks
-void totalist(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
+// Function to display the list of students without total marks
+void listwithouttotal(string ids[], string names[], double math[], double science[], double English[], int count)
 {
-    cout <<"ID\tName\tMath\tScience\tEnglish\tTotal\n";
+    cout << "ID\tName\tMath\tScience\tEnglish\n";
     for (int i = 0; i < count; i++)
     {
-        cout << ids[i] <<"\t" << names[i] <<"\t"
-             << math[i] <<"\t" <<science[i] <<"\t"
-             << English[i] <<"\t"<<total[i] << endl;
+        cout << ids[i] << "\t" << names[i] << "\t"
+             << math[i] << "\t" << science[i] << "\t"
+             << English[i] << endl;
+    }
+}
+
+
+// Function to calculate total marks and display the list of students with total marks
+void listwithtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
+{
+    cout << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
+    for (int i = 0; i < count; i++)
+    {
+        total[i] = math[i] + science[i] + English[i];
+        cout << ids[i] << "\t" << names[i] << "\t"
+             << math[i] << "\t" << science[i] << "\t"
+             << English[i] << "\t" << total[i] << endl;
     }
 }
 
 // Function to print list of students sorted by total marks using bubble sort
 void sortedtotal(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
-    const int avoidMnumber = 1;//Avoid magic number.
-   
-    // Bubble sort
+    const int avoidMnumber = 1; // Avoid magic number.
+
+    // Bubble sort algorithm
     for (int i = 0; i < count - avoidMnumber; i++)
     {
         for (int j = 0; j < count - i - avoidMnumber; j++)
         {
             if (total[j] > total[j + avoidMnumber])
             {
-                // Manually swap elements
+                //Sort student ID
                 string tempId = ids[j];
                 ids[j] = ids[j + avoidMnumber];
                 ids[j + avoidMnumber] = tempId;
-
+                //Sort student names
                 string tempName = names[j];
                 names[j] = names[j + avoidMnumber];
                 names[j + avoidMnumber] = tempName;
-
+                //Sort math marks
                 double tempMath = math[j];
                 math[j] = math[j + avoidMnumber];
                 math[j + avoidMnumber] = tempMath;
-
+                //Sort science marks
                 double tempScience = science[j];
                 science[j] = science[j + avoidMnumber];
                 science[j + avoidMnumber] = tempScience;
-
+                //Sort English marks
                 double tempEnglish = English[j];
                 English[j] = English[j + avoidMnumber];
                 English[j + avoidMnumber] = tempEnglish;
-
+                //Sort total marks
                 double tempTotal = total[j];
                 total[j] = total[j + avoidMnumber];
                 total[j + avoidMnumber] = tempTotal;
             }
         }
     }
-
-    // Display sorted list
-    totalist(ids, names, math, science, English, total, count);
-}
-//Function for finding highest and lowest total marks
-void twoextremevalue(double total[], int markIndex[], int count){
-    const int avoidMnumber = 1;
-    int highestIndex = 0, lowestIndex = 0;
-    for (int i = 0; i < count - avoidMnumber; i++)
-    {
-        for (int j = 0; j < count - i - avoidMnumber; j++)
-        {
-            if (total[j] > total[j + avoidMnumber])
-            {
-                double temp = total[j];
-                total[j] = total[j + avoidMnumber];
-                total[j + avoidMnumber] = temp;
-
-                int arraytemp = markIndex[j];
-             markIndex[j] = markIndex[j + avoidMnumber];
-             markIndex[j + avoidMnumber] = arraytemp;
-            }
-        }
-        for (int i = 0; i < count; i++)
-        {
-         markIndex[i] = i;
-        }
-    }
-    
 }
 
 // Function to write report to file
 void writereport(string ids[], string names[], double math[], double science[], double English[], double total[], int count)
 {
     ofstream outfile("summary.txt");
-    if(!outfile){
+
+    if (!outfile)
+    {
         cout << "File open failed" << endl;
     }
-    else{
+    else
+    {
         cout << "File open successfully" << endl;
+
+        //Make sure print sorted data
+        sortedtotal(ids, names, math, science, English, total, count);
+
+        // Calculate total mark of each subject
         double mathtotal = 0, sciencetotal = 0, Englishtotal = 0, totalAll = 0;
         for (int i = 0; i < count; i++)
         {
@@ -304,21 +338,35 @@ void writereport(string ids[], string names[], double math[], double science[], 
             Englishtotal += English[i];
             totalAll += total[i];
         }
+        // Average mark of each subject
         double avgmath = mathtotal / count;
         double avgscience = sciencetotal / count;
         double avgEnglish = Englishtotal / count;
         double avgtotal = totalAll / count;
-        const int avoidMnumber = 1;
-        const int lowest = 0;
-        int markIndex[count];
-        
-        
-        twoextremevalue(total, markIndex, count);
-        
-        double highestmark = total[count - avoidMnumber];
-        double lowestmark = total[lowest];
-        int highestIndex = markIndex[count - avoidMnumber];
-        int lowestIndex = markIndex[lowest];
+        // Variable for avoiding magic number
+        const int startIndex = 0;
+
+        // Variables of highest mark and lowestIndex mark
+        double highestmark = total[startIndex];
+        double lowestmark = total[startIndex];
+        int highestIndex = 0;
+        int lowestIndex = 0;
+
+        // Find extreme values
+        for (int i = 0; i < count; i++)
+        {
+            if (total[i] > highestmark)
+            {
+                highestmark = total[i];
+                highestIndex = i;
+            }
+            if (total[i] < lowestIndex)
+            {
+                lowestmark = total[i];
+                lowestIndex = i;
+            }
+        }
+
         outfile << "ID\tName\tMath\tScience\tEnglish\tTotal\n";
         for (int i = 0; i < count; ++i)
         {
